@@ -68,3 +68,32 @@ export const verifyOtpAndRegister = async (req, res) => {
   }
 };
 
+export const loginWithEmail = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) return res.status(400).json({ message: "Email is required" });
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+
+    user.otp = otp;
+    user.otpExpire = otpExpire;
+    await user.save();
+
+    await sendOtpToEmail(email, getVerificationEmailHtml(otp));
+
+    res.status(200).json({ message: "OTP sent to your email" });
+    
+  } catch (err) {
+    res.status(500).json({ message: "Failed to send OTP" });
+  }
+};
+
+

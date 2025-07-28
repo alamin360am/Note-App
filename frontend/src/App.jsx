@@ -1,11 +1,15 @@
-import React from 'react'
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Signup from "./pages/Signup";
 
-const App = () => {
+function App() {
   return (
-    <div>
-      App
-    </div>
-  )
+    <Router>
+      <Routes>
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

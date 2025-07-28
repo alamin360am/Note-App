@@ -4,6 +4,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './db/connectDB.js';
 import userRouter from './routes/authRoutes.js';
+import noteRouter from './routes/noteRoutes.js';
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/auth', userRouter);
+app.use('/api/notes', noteRouter);
 
 const PORT = process.env.PORT || 5000;
 

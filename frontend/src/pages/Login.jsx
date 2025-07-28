@@ -3,10 +3,8 @@ import auth_image from './../assets/auth_image.jpg'
 import axiosInstance from '../utils/axiosInstance';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Signup = () => {
+const Login = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    dob: '',
     email: '',
   });
 
@@ -27,7 +25,7 @@ const Signup = () => {
     setMessage('');
 
     try {
-      const res = await axiosInstance.post('/auth/signup', { email: formData.email });
+      const res = await axiosInstance.post('/auth/login', { email: formData.email });
 
       setMessage(res.data.message);
 
@@ -46,14 +44,13 @@ const Signup = () => {
     setMessage('');
 
     try {
-        const res = await axiosInstance.post('/auth/verify-otp', {
-        name: formData.name,
-        dob: formData.dob,
+        const res = await axiosInstance.post('/auth/verify-login', {
         email: formData.email,
         otp: otp
         });
 
         setMessage(res.data.message);
+
         navigate('/dashboard')
 
     } catch (error) {
@@ -72,45 +69,6 @@ const Signup = () => {
           <p className="text-sm text-gray-500 mb-6">Sign up to enjoy the feature of HD</p>
 
           <form onSubmit={handleSendOtp} className="space-y-4">
-
-            {/* Name Field */}
-            <div className="relative mb-6">
-              <input
-                id="name"
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Jonas Khanwald"
-                className="peer w-full px-4 pt-3 pb-2 border border-gray-500 text-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-              <label
-                htmlFor="name"
-                className="absolute left-3 -top-2 text-sm bg-white px-1 text-gray-500 peer-focus:text-blue-500 transition-all"
-              >
-                Your Name
-              </label>
-            </div>
-
-            {/* Date of Birth Field */}
-            <div className="relative mb-6">
-              <input
-                id="dob"
-                type="date"
-                name="dob"
-                value={formData.dob}
-                onChange={handleChange}
-                className="peer w-full px-4 py-2 border border-gray-500 text-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-              <label
-                htmlFor="dob"
-                className="absolute left-3 -top-2 text-sm bg-white px-1 text-gray-500 peer-focus:text-blue-500 transition-all"
-              >
-                Date of Birth
-              </label>
-            </div>
 
             {/* Email Field */}
             <div className="relative mb-6">
@@ -158,21 +116,21 @@ const Signup = () => {
                 </div>
             ) : 
 
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 cursor-pointer"
-              disabled={loading}
-            >
-              {loading ? 'Sending...' : 'Get OTP'}
-            </button>
+                <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 cursor-pointer"
+                disabled={loading}
+                >
+                {loading ? 'Sending...' : 'Get OTP'}
+                </button>
         }
 
           </form>
 
           <p className="text-sm mt-6 text-gray-600">
-            Already have an account?{' '}
-            <Link to={'/login'} className="text-blue-600 hover:underline">
-              Sign in
+            Are you new?{' '}
+            <Link to={'/signup'} className="text-blue-600 hover:underline">
+              Sign up
             </Link>
           </p>
         </div>
@@ -190,4 +148,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Login;

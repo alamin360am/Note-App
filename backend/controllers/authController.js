@@ -1,7 +1,7 @@
-import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import { getVerificationEmailHtml } from "../utils/emailTemplate.js";
 import { sendOtpToEmail } from "../utils/sendEmail.js";
+import { generateTokenAndSetCookie } from "../utils/jwt.js";
 
 export const signupWithEmail = async (req, res) => {
   const { email } = req.body;
@@ -57,11 +57,9 @@ export const verifyOtpAndRegister = async (req, res) => {
     user.otpExpire = null;
     await user.save();
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    generateTokenAndSetCookie(res, user._id);
 
-    res.status(200).json({ message: "Signup successful", token, user });
+    res.status(200).json({ message: "Signup successful", user });
     
   } catch (error) {
     res.status(500).json({ message: "OTP verification failed", error });
@@ -90,9 +88,34 @@ export const loginWithEmail = async (req, res) => {
     await sendOtpToEmail(email, getVerificationEmailHtml(otp));
 
     res.status(200).json({ message: "OTP sent to your email" });
-    
+
   } catch (err) {
     res.status(500).json({ message: "Failed to send OTP" });
+  }
+};
+
+export const verifyLoginOtp = async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) return res.status(400).json({ message: "Email and OTP required" });
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user || user.otp !== otp || user.otpExpire < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    user.otp = null;
+    user.otpExpire = null;
+    await user.save();
+
+    generateTokenAndSetCookie(res, user._id);
+
+    res.status(200).json({ message: "Login successful", user });
+
+  } catch (err) {
+    res.status(500).json({ message: "OTP verification failed" });
   }
 };
 

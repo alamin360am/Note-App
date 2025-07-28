@@ -11,6 +11,8 @@ const Signup = () => {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otp, setOtp] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,6 +27,8 @@ const Signup = () => {
       const res = await axiosInstance.post('/auth/signup', { email: formData.email });
 
       setMessage(res.data.message);
+
+      setShowOtpInput(true);  
       
     } catch (error) {
       setMessage(error.response?.data?.message || 'Something went wrong');
@@ -32,6 +36,28 @@ const Signup = () => {
       setLoading(false);
     }
   };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+
+    try {
+        const res = await axiosInstance.post('/auth/verify-otp', {
+        name: formData.name,
+        dob: formData.dob,
+        email: formData.email,
+        otp: otp
+        });
+
+        setMessage(res.data.message);
+        // যদি চান তাহলে এখানেই লগইন বা হোমে রিডিরেক্ট করতে পারেন
+    } catch (error) {
+        setMessage(error.response?.data?.message || 'OTP verification failed');
+    } finally {
+        setLoading(false);
+    }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-2">
@@ -102,15 +128,41 @@ const Signup = () => {
               </label>
             </div>
 
+            {message && <p className="text-center text-sm text-gray-600">{message}</p>}
+
+            {showOtpInput ? (
+                <div className="space-y-4 mt-6">
+                    <div className="relative">
+                    <input
+                        type="text"
+                        name="otp"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        placeholder="Enter the OTP sent to your email"
+                        className="w-full px-4 py-2 border border-gray-500 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        required
+                    />
+                    </div>
+
+                    <button
+                    onClick={handleVerifyOtp}
+                    className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 cursor-pointer"
+                    disabled={loading}
+                    >
+                    {loading ? 'Verifying...' : 'Verify OTP'}
+                    </button>
+                </div>
+            ) : 
+
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 cursor-pointer"
               disabled={loading}
             >
               {loading ? 'Sending...' : 'Get OTP'}
             </button>
+        }
 
-            {message && <p className="text-center text-sm mt-2 text-gray-600">{message}</p>}
           </form>
 
           <p className="text-sm mt-6 text-gray-600">

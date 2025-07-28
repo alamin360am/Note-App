@@ -37,7 +37,7 @@ export const signupWithEmail = async (req, res) => {
 };
 
 export const verifyOtpAndRegister = async (req, res) => {
-  const { email, otp, name } = req.body;
+  const { email, otp, name, dob } = req.body;
 
   if (!email || !otp || !name)
     return res.status(400).json({ message: "All fields are required" });
@@ -53,6 +53,7 @@ export const verifyOtpAndRegister = async (req, res) => {
 
     user.isVerified = true;
     user.name = name;
+    user.dob = dob;
     user.otp = null;
     user.otpExpire = null;
     await user.save();

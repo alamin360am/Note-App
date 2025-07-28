@@ -86,7 +86,8 @@ export const loginWithEmail = async (req, res) => {
     user.otpExpire = otpExpire;
     await user.save();
 
-    await sendOtpToEmail(email, getVerificationEmailHtml(otp));
+    // await sendOtpToEmail(email, getVerificationEmailHtml(otp));
+    console.log(otp);    
 
     res.status(200).json({ message: "OTP sent to your email" });
 

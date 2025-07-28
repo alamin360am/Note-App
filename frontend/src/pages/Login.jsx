@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import auth_image from './../assets/auth_image.jpg'
 import axiosInstance from '../utils/axiosInstance';
 import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/AuthContext';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,8 @@ const Login = () => {
   const [message, setMessage] = useState('');
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [otp, setOtp] = useState('');
+
+  const { setUser } = useContext(UserContext);
 
   const navigate = useNavigate()
 
@@ -51,6 +54,9 @@ const Login = () => {
 
         setMessage(res.data.message);
 
+        setUser(res.data.user);
+        
+
         navigate('/dashboard')
 
     } catch (error) {
@@ -65,8 +71,8 @@ const Login = () => {
       <div className="bg-white w-full max-w-4xl rounded-lg shadow-md overflow-hidden flex">
         {/* Left Side Form */}
         <div className="w-full md:w-1/2 p-4 md:p-10">
-          <h2 className="text-3xl font-bold mb-2">Sign up</h2>
-          <p className="text-sm text-gray-500 mb-6">Sign up to enjoy the feature of HD</p>
+          <h2 className="text-3xl font-bold mb-2">Sign in</h2>
+          <p className="text-sm text-gray-500 mb-6">Please login to continue to your account.</p>
 
           <form onSubmit={handleSendOtp} className="space-y-4">
 

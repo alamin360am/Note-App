@@ -133,6 +133,12 @@ const Login = () => {
 
           </form>
 
+          <div className='mt-4 text-center'>
+            <a href="http://localhost:5000/api/auth/google">
+              <button className="bg-red-500 text-white px-4 py-2 rounded">Continue with Google</button>
+            </a>
+          </div>
+
           <p className="text-sm mt-6 text-gray-600">
             Are you new?{' '}
             <Link to={'/signup'} className="text-blue-600 hover:underline">

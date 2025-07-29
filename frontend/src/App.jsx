@@ -4,11 +4,13 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import PublicRoute from "./routes/PublicRoute";
 import PrivateRoute from "./routes/PrivateRoute";
+import HomeRedirect from "./components/HomeRedirect";
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<HomeRedirect />} />
         <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />

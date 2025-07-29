@@ -16,7 +16,7 @@ const app = express();
 // Middlewares
 app.use(cors({
   origin: 'https://note-app-six-pearl.vercel.app',
-  credentials: true,
+  credentials: true
 }));
 app.use(express.json());
 app.use(cookieParser());
@@ -28,7 +28,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: 'lax'
+    sameSite: 'None'
   }
 }));
 

@@ -10,6 +10,7 @@ import {
   verifyOtpAndRegister
 } from "../controllers/authController.js";
 import { protect } from "../middlewares/authMiddleware.js";
+import { generateTokenAndSetCookie } from "../utils/jwt.js";
 
 dotenv.config();
 
@@ -31,11 +32,13 @@ userRouter.get("/google", passport.authenticate("google", {
 userRouter.get("/google/callback",
   passport.authenticate("google", {
     failureRedirect: `${process.env.CLIENT_URL}/login`,
-    session: true
+    session: false,
   }),
-  (req, res) => {
-    res.redirect(`${process.env.CLIENT_URL}`);
-  }
+
+  async function (req, res) {
+    generateTokenAndSetCookie(res, req.user._id);
+    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+  },
 );
 
 export default userRouter;

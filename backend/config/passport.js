@@ -10,26 +10,37 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: "http://localhost:5000/api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const existingUser = await User.findOne({ googleId: profile.id });
+        const email = profile.emails[0].value;
 
-        if (existingUser) return done(null, existingUser);
+        let user = await User.findOne({ email });
+
+        if (user) {
+          if (!user.googleId) {
+            user.googleId = profile.id;
+            user.isGoogleUser = true;
+            user.avatar = profile.photos?.[0]?.value;
+            await user.save();
+          }
+
+          return done(null, user);
+        }
 
         const newUser = await User.create({
-            name: profile.displayName,
-            email: profile.emails[0].value,
-            googleId: profile.id,
-            avatar: profile.photos?.[0]?.value,
-            isVerified: true,
-            isGoogleUser: true,
+          name: profile.displayName,
+          email: email,
+          googleId: profile.id,
+          avatar: profile.photos?.[0]?.value,
+          isVerified: true,
+          isGoogleUser: true,
         });
 
-        done(null, newUser);
+        return done(null, newUser);
       } catch (error) {
-        done(error, false);
+        return done(error, false);
       }
     }
   )
